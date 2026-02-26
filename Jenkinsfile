@@ -41,11 +41,10 @@ pipeline {
         stage('Deploy to Minikube') {
             steps {
                 bat '''
-                minikube start
                 kubectl config use-context minikube
 
-                kubectl apply -f k8s/deployment.yaml --validate=false
-                kubectl apply -f k8s/service.yaml --validate=false
+                kubectl apply -f k8s/deployment.yaml
+                kubectl apply -f k8s/service.yaml 
 
                 kubectl get pods
                 kubectl get svc
