@@ -9,7 +9,7 @@ pipeline {
 
     stages {
 
-        stage('Checkout Code') {
+        stage('Clone Repository') {
             steps {
                 git branch: 'main',
                 url: 'https://github.com/Aravindrio2/CI-CD-PIPELINE.git'
