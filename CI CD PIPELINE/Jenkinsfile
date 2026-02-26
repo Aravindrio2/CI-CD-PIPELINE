@@ -1,0 +1,67 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = "aravindrio7/ci-cd-pipeline"
+        DOCKER_TAG = "latest"
+        GITHUB_REPO = "https://github.com/Aravindrio2/CI-CD-PIPELINE.git"
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                git branch: 'main',
+                url: "${GITHUB_REPO}"
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh """
+                docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
+                """
+            }
+        }
+
+        stage('Login & Push Docker Hub') {
+            steps {
+
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'USER',
+                    passwordVariable: 'PASS'
+                )]) {
+
+                    sh """
+                    echo $PASS | docker login -u $USER --password-stdin
+                    docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
+                    """
+                }
+            }
+        }
+
+        stage('Deploy to Minikube') {
+            steps {
+                sh """
+                kubectl apply -f k8s/deployment.yaml
+                kubectl apply -f k8s/service.yaml
+
+                sleep 10
+                echo 'Application URL :'
+                minikube service ci-cd-pipeline --url
+                """
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Pipeline Success 🎉"
+        }
+
+        failure {
+            echo "Pipeline Failed ❌"
+        }
+    }
+}
