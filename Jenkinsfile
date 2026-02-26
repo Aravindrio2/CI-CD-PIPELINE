@@ -32,7 +32,7 @@ pipeline {
 
                     bat '''
                     echo %PASS% | docker login -u %USER% --password-stdin
-                    docker push aravindrio7/ci-cd-pipeline:latest
+                    docker push aravindrio7/ci-cdpipelines:latest
                     '''
                 }
             }
