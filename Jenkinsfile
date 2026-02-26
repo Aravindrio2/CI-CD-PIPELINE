@@ -1,27 +1,19 @@
 pipeline {
-    agent any
 
-    environment {
-        DOCKER_IMAGE = "aravindrio7/ci-cd-pipeline"
-        DOCKER_TAG = "latest"
-        GITHUB_REPO = "https://github.com/Aravindrio2/CI-CD-PIPELINE.git"
-        KUBE_CONFIG = "C:\\Users\\HP\\.kube\\config"
-    }
+    agent any
 
     stages {
 
         stage('Checkout Code') {
             steps {
                 git branch: 'main',
-                url: "${GITHUB_REPO}"
+                url: 'https://github.com/Aravindrio2/CI-CD-PIPELINE.git'
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                sh """
-                docker build -t ${DOCKER_IMAGE}:${DOCKER_TAG} .
-                """
+                bat 'docker build -t aravindrio7/ci-cd-pipeline:latest .'
             }
         }
 
@@ -34,35 +26,24 @@ pipeline {
                     passwordVariable: 'PASS'
                 )]) {
 
-                    sh """
-                    echo $PASS | docker login -u $USER --password-stdin
-                    docker push ${DOCKER_IMAGE}:${DOCKER_TAG}
-                    """
+                    bat '''
+                    echo %PASS% | docker login -u %USER% --password-stdin
+                    docker push aravindrio7/ci-cd-pipeline:latest
+                    '''
                 }
             }
         }
 
         stage('Deploy to Minikube') {
             steps {
-                sh """
+                bat '''
                 kubectl apply -f k8s/deployment.yaml
                 kubectl apply -f k8s/service.yaml
-
-                sleep 10
-                echo 'Application URL :'
+                timeout 10
                 minikube service ci-cd-pipeline --url
-                """
+                '''
             }
         }
-    }
 
-    post {
-        success {
-            echo "Pipeline Success 🎉"
-        }
-
-        failure {
-            echo "Pipeline Failed ❌"
-        }
     }
 }
