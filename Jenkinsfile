@@ -37,10 +37,12 @@ pipeline {
         stage('Deploy to Minikube') {
             steps {
                 bat '''
-                kubectl apply -f k8s/deployment.yaml
-                kubectl apply -f k8s/service.yaml
-                timeout 10
-                minikube service ci-cd-pipeline --url
+                 bat '''
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
+        timeout /t 10
+        kubectl get pods
+        kubectl get svc
                 '''
             }
         }
