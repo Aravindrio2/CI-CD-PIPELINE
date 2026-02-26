@@ -5,6 +5,7 @@ pipeline {
         DOCKER_IMAGE = "aravindrio7/ci-cd-pipeline"
         DOCKER_TAG = "latest"
         GITHUB_REPO = "https://github.com/Aravindrio2/CI-CD-PIPELINE.git"
+        KUBE_CONFIG = "C:\\Users\\HP\\.kube\\config"
     }
 
     stages {
