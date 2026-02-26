@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ci-cd-pipeline
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ci-cd-pipeline
+  template:
+    metadata:
+      labels:
+        app: ci-cd-pipeline
+    spec:
+      containers:
+        - name: ci-cd-pipeline
+          image: aravindrio7/ci-cd-pipeline:latest
+          ports:
+            - containerPort: 80
