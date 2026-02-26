@@ -11,8 +11,7 @@ pipeline {
         stage('Clone Repository') {
             steps {
                 git branch: 'main',
-                    credentialsId: 'GITHUB1',
-                    url: 'https://github.com/Aravindrio2/CI-CD-PIPELINE.git'
+                url: 'https://github.com/Aravindrio2/CI-CD-PIPELINE.git'
             }
         }
 
