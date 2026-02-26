@@ -4,6 +4,7 @@ pipeline {
 
     environment {
         KUBECONFIG = 'C:\\ProgramData\\Jenkins\\.kube\\config'
+        DOCKER_IMAGE = 'aravindrio7/ci-cd-pipeline:latest'
     }
 
     stages {
@@ -17,7 +18,7 @@ pipeline {
 
         stage('Build Docker Image') {
             steps {
-                bat 'docker build -t aravindrio7/ci-cd-pipeline:latest .'
+                bat "docker build -t ${DOCKER_IMAGE} ."
             }
         }
 
@@ -40,9 +41,12 @@ pipeline {
         stage('Deploy to Minikube') {
             steps {
                 bat '''
-                kubectl config view
-                kubectl apply -f k8s/deployment.yaml
-                kubectl apply -f k8s/service.yaml
+                minikube start
+                kubectl config use-context minikube
+
+                kubectl apply -f k8s/deployment.yaml --validate=false
+                kubectl apply -f k8s/service.yaml --validate=false
+
                 kubectl get pods
                 kubectl get svc
                 '''
