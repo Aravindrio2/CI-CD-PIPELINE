@@ -4,7 +4,7 @@ pipeline {
 
     environment {
         KUBECONFIG = 'C:\\ProgramData\\Jenkins\\.kube\\config'
-        DOCKER_IMAGE = 'aravindrio7/ci-cd-pipeline:latest'
+        DOCKER_IMAGE = 'aravindrio7/ci-cdpipelines:latest'
     }
 
     stages {
