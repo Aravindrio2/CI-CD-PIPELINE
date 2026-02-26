@@ -1,6 +1,7 @@
 pipeline {
 
     agent any
+
     environment {
         KUBECONFIG = 'C:\\ProgramData\\Jenkins\\.kube\\config'
     }
@@ -39,9 +40,9 @@ pipeline {
         stage('Deploy to Minikube') {
             steps {
                 bat '''
+                kubectl config view
                 kubectl apply -f k8s/deployment.yaml
                 kubectl apply -f k8s/service.yaml
-                timeout /t 10
                 kubectl get pods
                 kubectl get svc
                 '''
