@@ -19,7 +19,6 @@ pipeline {
 
         stage('Login & Push Docker Hub') {
             steps {
-
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-creds',
                     usernameVariable: 'USER',
@@ -37,12 +36,11 @@ pipeline {
         stage('Deploy to Minikube') {
             steps {
                 bat '''
-                 bat '''
-        kubectl apply -f k8s/deployment.yaml
-        kubectl apply -f k8s/service.yaml
-        timeout /t 10
-        kubectl get pods
-        kubectl get svc
+                kubectl apply -f k8s/deployment.yaml
+                kubectl apply -f k8s/service.yaml
+                timeout /t 10
+                kubectl get pods
+                kubectl get svc
                 '''
             }
         }
