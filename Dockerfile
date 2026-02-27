@@ -1,9 +1,14 @@
-# Use nginx base image
+# Use lightweight nginx image
 FROM nginx:alpine
 
-# Copy website files to nginx html directory
-COPY "CI CD PIPELINE"/ /usr/share/nginx/html/
+# Set working directory
+WORKDIR /usr/share/nginx/html
 
+# Copy pipeline website content
+COPY CI\ CD\ PIPELINE/ .
 
-# Expose port
+# Expose nginx port
 EXPOSE 80
+
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
