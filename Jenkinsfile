@@ -45,8 +45,8 @@ pipeline {
                  kubectl get nodes
                  kubectl apply -f k8s/deployment.yaml
                  kubectl apply -f k8s/service.yaml
-                 kubectl rollout restart deployment/ci-cd-pipeline
-                 kubectl rollout status deployment/ci-cd-pipeline
+                 kubectl rollout restart deployment/ci-cdpipelines
+                 kubectl rollout status deployment/ci-cdpipelines
                 
                 """
             }
