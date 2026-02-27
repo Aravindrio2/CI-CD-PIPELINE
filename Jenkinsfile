@@ -41,7 +41,7 @@ pipeline {
         stage('Deploy to Minikube') {
             steps {
                 bat '''
-                 set KUBECONFIG=C:\\Users\\Aravind\\.kube\\config
+                 
                  kubectl get nodes
                  kubectl apply -f k8s/deployment.yaml
                  kubectl apply -f k8s/service.yaml
