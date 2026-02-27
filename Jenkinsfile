@@ -41,13 +41,10 @@ pipeline {
         stage('Deploy to Minikube') {
             steps {
                 bat '''
-                if not exist "C:\\ProgramData\\Jenkins\\.kube" mkdir "C:\\ProgramData\\Jenkins\\.kube"
-                copy /Y C:\\Users\\Aravind\\.kube\\config C:\\ProgramData\\Jenkins\\.kube\\config
-                kubectl get nodes
-                kubectl apply -f k8s/deployment.yaml
-                kubectl apply -f k8s/service.yaml
-                kubectl rollout status deployment/ci-cdpipelines --timeout=120s
-            
+                 kubectl get nodes
+                 kubectl apply -f k8s/deployment.yaml
+                 kubectl apply -f k8s/service.yaml
+                 kubectl rollout status deployment/ci-cdpipelines
                 '''
             }
         }
