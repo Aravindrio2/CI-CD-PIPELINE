@@ -62,6 +62,17 @@ pipeline {
             }
         }
     }
+         stage('Show Application URL') {
+    steps {
+        bat """
+        echo ==================================
+        echo Application Access URL
+        echo ==================================
+
+        minikube service ci-cdpipelines --url
+        """
+    }
+}
 
     post {
         success {
