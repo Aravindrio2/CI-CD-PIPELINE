@@ -9,21 +9,22 @@ pipeline {
 
     stages {
 
-        stage('Clone Repository') {
+        stage('Clone Repo') {
             steps {
-                git branch: 'main',
-                url: 'https://github.com/Aravindrio2/CI-CD-PIPELINE.git'
+                git url: 'https://github.com/Aravindrio2/CI-CD-PIPELINE.git',
+                branch: 'main'
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build Image') {
             steps {
                 bat "docker build -t ${DOCKER_IMAGE} ."
             }
         }
 
-        stage('Login & Push Docker Hub') {
+        stage('Push Docker Hub') {
             steps {
+
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-creds',
                     usernameVariable: 'USER',
@@ -31,28 +32,16 @@ pipeline {
                 )]) {
 
                     bat """
-                    echo %PASS% | docker login -u %USER% --password-stdin
+                    docker login -u %USER% -p %PASS%
                     docker push ${DOCKER_IMAGE}
                     """
                 }
             }
         }
 
-        stage('Deploy to Minikube') {
+        stage('Deploy Kubernetes') {
             steps {
                 bat """
-                echo Checking Minikube status...
-
-                minikube status | find "Running"
-                if %ERRORLEVEL% NEQ 0 (
-                    echo Minikube not running. Starting now...
-                    minikube start
-                ) else (
-                    echo Minikube already running. Skipping start.
-                )
-
-                kubectl get nodes
-
                 kubectl apply -f k8s/deployment.yaml
                 kubectl apply -f k8s/service.yaml
 
@@ -61,26 +50,21 @@ pipeline {
                 """
             }
         }
-    }
-         stage('Show Application URL') {
-    steps {
-        bat """
-        echo ==================================
-        echo Application Access URL
-        echo ==================================
 
-        minikube service ci-cdpipelines --url
-        """
+        stage('Show URL') {
+            steps {
+                bat "minikube service ci-cdpipelines --url"
+            }
+        }
     }
-}
 
     post {
         success {
-            echo "✅ Pipeline Success"
+            echo "PIPELINE SUCCESS ✅"
         }
 
         failure {
-            echo "❌ Pipeline Failed"
+            echo "PIPELINE FAILED ❌"
         }
     }
 }
