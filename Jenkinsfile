@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     environment {
-        KUBECONFIG = 'C:\\ProgramData\\Jenkins\\.kube\\config'
+        KUBECONFIG = 'C:\ProgramData\Jenkins\.kube\config'
         DOCKER_IMAGE = 'aravindrio7/ci-cdpipelines:latest'
     }
 
