@@ -38,41 +38,32 @@ pipeline {
                 }
             }
         }
-
         stage('Deploy to Minikube') {
-            steps {
-                bat """
-                echo Starting Minikube...
+    steps {
+        bat """
+        echo Checking Minikube status...
 
-                minikube start
+        minikube status | find "Running"
+        if %ERRORLEVEL% NEQ 0 (
+            echo Minikube not running. Starting now...
+            minikube start
+        ) else (
+            echo Minikube already running. Skipping start.
+        )
 
-                kubectl get nodes
+        kubectl get nodes
 
-                kubectl apply -f k8s/deployment.yaml
-                kubectl apply -f k8s/service.yaml
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/service.yaml
 
-                kubectl rollout restart deployment ci-cdpipelines
-                kubectl rollout status deployment ci-cdpipelines
-                """
-            }
-        }
-
-        stage('Show Application URL') {
-            steps {
-                bat """
-                echo ================================
-                echo Application URL
-                echo ================================
-
-                minikube service ci-cdpipelines --url
-                """
-            }
-        }
+        kubectl rollout restart deployment ci-cdpipelines
+        kubectl rollout status deployment ci-cdpipelines
+        """
     }
-
-    post {
-        success {
-            echo "✅ Pipeline Success"
+}
+        {
+      
+        Pipeline Success"
         }
 
         failure {
