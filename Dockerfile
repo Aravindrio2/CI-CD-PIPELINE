@@ -5,7 +5,8 @@ FROM nginx:alpine
 WORKDIR /usr/share/nginx/html
 
 # Copy pipeline website content
-COPY CI\ CD\ PIPELINE/ .
+COPY ci-cd-pipeline/ .
+
 
 # Expose nginx port
 EXPOSE 80
