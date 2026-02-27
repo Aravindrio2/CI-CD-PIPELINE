@@ -24,7 +24,6 @@ pipeline {
 
         stage('Login & Push Docker Hub') {
             steps {
-
                 withCredentials([usernamePassword(
                     credentialsId: 'dockerhub-creds',
                     usernameVariable: 'USER',
@@ -38,32 +37,35 @@ pipeline {
                 }
             }
         }
+
         stage('Deploy to Minikube') {
-    steps {
-        bat """
-        echo Checking Minikube status...
+            steps {
+                bat """
+                echo Checking Minikube status...
 
-        minikube status | find "Running"
-        if %ERRORLEVEL% NEQ 0 (
-            echo Minikube not running. Starting now...
-            minikube start
-        ) else (
-            echo Minikube already running. Skipping start.
-        )
+                minikube status | find "Running"
+                if %ERRORLEVEL% NEQ 0 (
+                    echo Minikube not running. Starting now...
+                    minikube start
+                ) else (
+                    echo Minikube already running. Skipping start.
+                )
 
-        kubectl get nodes
+                kubectl get nodes
 
-        kubectl apply -f k8s/deployment.yaml
-        kubectl apply -f k8s/service.yaml
+                kubectl apply -f k8s/deployment.yaml
+                kubectl apply -f k8s/service.yaml
 
-        kubectl rollout restart deployment ci-cdpipelines
-        kubectl rollout status deployment ci-cdpipelines
-        """
+                kubectl rollout restart deployment ci-cdpipelines
+                kubectl rollout status deployment ci-cdpipelines
+                """
+            }
+        }
     }
-}
-        {
-      
-        Pipeline Success"
+
+    post {
+        success {
+            echo "✅ Pipeline Success"
         }
 
         failure {
