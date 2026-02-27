@@ -41,13 +41,13 @@ pipeline {
         stage('Deploy to Minikube') {
             steps {
                 bat """
-                 minikube start
+                 
                  kubectl get nodes
                  kubectl apply -f k8s/deployment.yaml
                  kubectl apply -f k8s/service.yaml
                  kubectl rollout restart deployment/ci-cd-pipeline
                  kubectl rollout status deployment/ci-cd-pipeline
-                 minikube service ci-cdpipeline --url
+                
                 """
             }
         }
