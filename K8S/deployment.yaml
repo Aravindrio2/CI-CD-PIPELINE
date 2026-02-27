@@ -13,7 +13,7 @@ spec:
         app: ci-cdpipelines
     spec:
       containers:
-        - name: ci-cd-pipeline
+        - name: ci-cdpipelines
           image: aravindrio7/ci-cdpipelines:latest
           ports:
             - containerPort: 80
