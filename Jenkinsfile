@@ -9,20 +9,20 @@ pipeline {
 
     stages {
 
-        stage('Clone Repo') {
+        stage('Clone Repository') {
             steps {
-                git url: 'https://github.com/Aravindrio2/CI-CD-PIPELINE.git',
-                branch: 'main'
+                git branch: 'main',
+                url: 'https://github.com/Aravindrio2/CI-CD-PIPELINE.git'
             }
         }
 
-        stage('Build Image') {
+        stage('Build Docker Image') {
             steps {
                 bat "docker build -t ${DOCKER_IMAGE} ."
             }
         }
 
-        stage('Push Docker Hub') {
+        stage('Login & Push Docker Hub') {
             steps {
 
                 withCredentials([usernamePassword(
@@ -32,16 +32,28 @@ pipeline {
                 )]) {
 
                     bat """
-                    docker login -u %USER% -p %PASS%
+                    echo %PASS% | docker login -u %USER% --password-stdin
                     docker push ${DOCKER_IMAGE}
                     """
                 }
             }
         }
 
-        stage('Deploy Kubernetes') {
+        stage('Deploy to Minikube') {
             steps {
                 bat """
+                echo Checking Minikube status...
+
+                minikube status | find "Running"
+                if %ERRORLEVEL% NEQ 0 (
+                    echo Minikube not running. Starting now...
+                    minikube start
+                ) else (
+                    echo Minikube already running. Skipping start.
+                )
+
+                kubectl get nodes
+
                 kubectl apply -f k8s/deployment.yaml
                 kubectl apply -f k8s/service.yaml
 
@@ -51,20 +63,26 @@ pipeline {
             }
         }
 
-        stage('Show URL') {
+        stage('Show Application URL') {
             steps {
-                bat "minikube service ci-cdpipelines --url"
+                bat """
+                echo ==================================
+                echo Application Access URL
+                echo ==================================
+
+                minikube service ci-cdpipelines --url
+                """
             }
         }
     }
 
     post {
         success {
-            echo "PIPELINE SUCCESS ✅"
+            echo "✅ Pipeline Success"
         }
 
         failure {
-            echo "PIPELINE FAILED ❌"
+            echo "❌ Pipeline Failed"
         }
     }
 }
