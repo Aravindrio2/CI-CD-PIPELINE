@@ -42,9 +42,15 @@ pipeline {
         stage('Deploy to Minikube') {
             steps {
                 bat """
+                echo Starting Minikube...
+
+                minikube start
+
                 kubectl get nodes
+
                 kubectl apply -f k8s/deployment.yaml
                 kubectl apply -f k8s/service.yaml
+
                 kubectl rollout restart deployment ci-cdpipelines
                 kubectl rollout status deployment ci-cdpipelines
                 """
@@ -54,14 +60,23 @@ pipeline {
         stage('Show Application URL') {
             steps {
                 bat """
-                echo ==========================
-                echo Application Access URL
-                echo ==========================
+                echo ================================
+                echo Application URL
+                echo ================================
 
                 minikube service ci-cdpipelines --url
                 """
             }
         }
+    }
 
+    post {
+        success {
+            echo "✅ Pipeline Success"
+        }
+
+        failure {
+            echo "❌ Pipeline Failed"
+        }
     }
 }
