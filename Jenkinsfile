@@ -3,8 +3,8 @@ pipeline {
     agent any
 
     environment {
-        KUBECONFIG = 'C:\ProgramData\Jenkins\.kube\config'
-        DOCKER_IMAGE = 'aravindrio7/ci-cdpipelines:latest'
+        KUBECONFIG = "C:/ProgramData/Jenkins/.kube/config"
+        DOCKER_IMAGE = "aravindrio7/ci-cdpipelines:latest"
     }
 
     stages {
@@ -30,23 +30,23 @@ pipeline {
                     passwordVariable: 'PASS'
                 )]) {
 
-                    bat '''
+                    bat """
                     echo %PASS% | docker login -u %USER% --password-stdin
-                    docker push aravindrio7/ci-cdpipelines:latest
-                    '''
+                    docker push ${DOCKER_IMAGE}
+                    """
                 }
             }
         }
 
         stage('Deploy to Minikube') {
             steps {
-                bat '''
-                 
+                bat """
                  kubectl get nodes
                  kubectl apply -f k8s/deployment.yaml
                  kubectl apply -f k8s/service.yaml
+                 kubectl rollout restart deployment/ci-cdpipelines
                  kubectl rollout status deployment/ci-cdpipelines
-                '''
+                """
             }
         }
 
