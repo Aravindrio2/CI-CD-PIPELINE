@@ -2,7 +2,8 @@
 FROM nginx:alpine
 
 # Copy website files to nginx html directory
-COPY . /usr/share/nginx/html
+COPY "CI CD PIPELINE"/ /usr/share/nginx/html/
+
 
 # Expose port
 EXPOSE 80
